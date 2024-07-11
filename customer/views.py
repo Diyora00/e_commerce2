@@ -1,3 +1,7 @@
+import openpyxl
+import csv
+import json
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from customer.models import Customer
 from customer.forms import *
@@ -68,3 +72,48 @@ def update_customer(request, customer_id):
 
     context = {'form': form}
     return render(request, 'customer/update-customer.html', context)
+
+
+def export_data(request):
+
+    format = request.GET.get('format', 'csv')
+    if format == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="customers.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Full Name', 'Phone number', 'Email', 'Address', 'Image'])
+        for customer in Customer.objects.all():
+            writer.writerow([customer.id, customer.fullname, customer.email, customer.phone,
+                             customer.address, customer.image])
+    elif format == 'json':
+        response = HttpResponse(content_type='application/json')
+        data = list(Customer.objects.all().values('id', 'fullname', 'phone', 'email', 'address', 'image'))
+        response.write(json.dumps(data, indent=4))
+        response['Content-Disposition'] = 'attachment; filename="customers.json"'
+    elif format == 'xlsx':
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="customers.xlsx"'
+
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Customers'
+
+        # Write header row
+        header = ['ID', 'Full name', 'Phone number', 'Email', 'Address', 'Image']
+        for col_num, column_title in enumerate(header, 1):
+            cell = worksheet.cell(row=1, column=col_num)
+            cell.value = column_title
+
+        # Write data rows
+        queryset = Customer.objects.all().values_list('id', 'fullname', 'phone', 'email', 'address', 'image')
+        for row_num, row in enumerate(queryset, 1):
+            for col_num, cell_value in enumerate(row, 1):
+                cell = worksheet.cell(row=row_num + 1, column=col_num)
+                cell.value = cell_value
+
+        workbook.save(response)
+    else:
+        response = HttpResponse(status=404)
+        response.content = 'Bad request'
+
+    return response

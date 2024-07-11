@@ -3,6 +3,8 @@ from django.db import models
 
 # title, description, price, rating, discount, discounted_price, quantity
 class Product(models.Model):
+    class Meta:
+        ordering = ['-id']
     title = models.CharField(max_length=100)
     description = models.TextField(null=True)
     # price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -10,6 +12,11 @@ class Product(models.Model):
     rating = models.FloatField()
     discount = models.PositiveIntegerField(default=0, null=True)
     quantity = models.PositiveIntegerField(default=0, null=True)
+    my_order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
 
     def get_attributes(self) -> list[dict]:
         product_attributes = ProductAttributeValue.objects.filter(product=self)

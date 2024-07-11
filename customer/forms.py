@@ -77,3 +77,10 @@ class RegisterForm(forms.ModelForm):
             user.save()
         return user
 
+
+class UserModelForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        exclude = ()
