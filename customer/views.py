@@ -1,3 +1,5 @@
+from django.views.generic import TemplateView
+from django.views import View
 import openpyxl
 import csv
 import json
@@ -10,18 +12,97 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-def add_customer(request):
-    form = CustomerModelForm()
+""" Class based views """
 
-    if request.method == 'POST':
+
+class CustomerListView(View):
+    def get(self, request):
+        search_post = request.GET.get('search')
+        if search_post:
+            customers = Customer.objects.filter(Q(fullname__icontains=search_post) | Q(email__icontains=search_post))
+        else:
+            customers = Customer.objects.all().order_by('-id')
+
+        paginator = Paginator(customers, 2)
+        page_number = request.GET.get('page')
+        try:
+            page_obj = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+
+        context = {'customers': customers, 'page_obj': page_obj}
+        return render(request, 'customer/customers.html', context)
+
+
+class CustomerDetailTemplateView(TemplateView):
+    template_name = 'customer/customer-details.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        customer = Customer.objects.get(pk=self.kwargs['customer_id'])
+        context['customer'] = customer
+        return context
+
+
+class AddCustomerTemplateView(TemplateView):
+    template_name = 'customer/add-customer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CustomerModelForm()
+        return context
+
+    def post(self, request,  *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+
         form = CustomerModelForm(request.POST, request.FILES)
+        context['form'] = form
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, 'Customer successfully added!.')
             return redirect('customers')
 
-    context = {'form': form}
-    return render(request, 'customer/add-customer.html', context)
+
+class UpdateCustomerTemplateView(TemplateView):
+    template_name = 'customer/update-customer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = Customer.objects.get(id=kwargs['customer_id'])
+        context['form'] = CustomerModelForm(instance=product)
+        return context
+
+    def post(self, request,  *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = Customer.objects.get(id=kwargs['customer_id'])
+
+        form = CustomerModelForm(instance=product, data=request.POST, files=request.FILES)
+        context['form'] = form
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, 'Customer successfully added!.')
+            return redirect('customers')
+
+
+class DeleteCustomerTemplateView(TemplateView):
+    template_name = 'customer/delete-customer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        customer = Customer.objects.get(id=kwargs['customer_id'])
+        context['customer'] = customer
+        return context
+
+    def post(self, request, *args, **kwargs):
+        customer = Customer.objects.get(id=kwargs['customer_id'])
+        customer.delete()
+        messages.add_message(request, messages.SUCCESS, 'Customer successfully deleted!')
+        return redirect('customers')
+
+
+""" Function based views """
 
 
 def show_customers(request):
@@ -50,14 +131,18 @@ def customer_details(request, customer_id):
     return render(request, 'customer/customer-details.html', context)
 
 
-def delete_customer(request, customer_id):
-    customer = Customer.objects.get(id=customer_id)
+def add_customer(request):
+    form = CustomerModelForm()
 
     if request.method == 'POST':
-        customer.delete()
-        messages.add_message(request, messages.SUCCESS, 'Customer successfully deleted.')
-        return redirect('customers')
-    return render(request, 'customer/delete-customer.html', {'customer': customer})
+        form = CustomerModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, 'Customer successfully added!.')
+            return redirect('customers')
+
+    context = {'form': form}
+    return render(request, 'customer/add-customer.html', context)
 
 
 def update_customer(request, customer_id):
@@ -72,6 +157,16 @@ def update_customer(request, customer_id):
 
     context = {'form': form}
     return render(request, 'customer/update-customer.html', context)
+
+
+def delete_customer(request, customer_id):
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == 'POST':
+        customer.delete()
+        messages.add_message(request, messages.SUCCESS, 'Customer successfully deleted.')
+        return redirect('customers')
+    return render(request, 'customer/delete-customer.html', {'customer': customer})
 
 
 def export_data(request):

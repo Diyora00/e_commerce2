@@ -6,7 +6,7 @@ from customer.models import Customer, User
 class CustomerModelForm(forms.ModelForm):
     class Meta:
         model = Customer
-        exclude = ()
+        exclude = ('my_order', )
 
 
 class LoginForm(forms.Form):

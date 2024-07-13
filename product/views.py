@@ -2,30 +2,52 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from product.forms import *  # ProductForm, ProductModelForm
 from product.models import *
+from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
 
-def index(request):
-    search_post = request.GET.get('search')
-    if search_post:
-        products = Product.objects.filter(Q(title__icontains=search_post) | Q(description__icontains=search_post))
-    else:
-        products = Product.objects.all().order_by('-id')
+# def index(request):
+#     search_post = request.GET.get('search')
+#     if search_post:
+#         products = Product.objects.filter(Q(title__icontains=search_post) | Q(description__icontains=search_post))
+#     else:
+#         products = Product.objects.all().order_by('-id')
+#
+#     # pagination
+#     paginator = Paginator(products, 2)
+#     page_number = request.GET.get('page')
+#     try:
+#         page_obj = paginator.get_page(page_number)
+#     except PageNotAnInteger:
+#         page_obj = paginator.page(1)
+#     except EmptyPage:
+#         page_obj = paginator.page(paginator.num_pages)
+#     context = {'products': products, 'page_obj': page_obj}
+#
+#     return render(request, 'product/product-list.html', context)
 
-    # pagination
-    paginator = Paginator(products, 2)
-    page_number = request.GET.get('page')
-    try:
-        page_obj = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
-    context = {'products': products, 'page_obj': page_obj}
+class ProductListView(View):
+    def get(self, request):
+        search_post = request.GET.get('search')
+        if search_post:
+            products = Product.objects.filter(Q(title__icontains=search_post) | Q(description__icontains=search_post))
+        else:
+            products = Product.objects.all().order_by('-id')
 
-    return render(request, 'product/product-list.html', context)
+        # pagination
+        paginator = Paginator(products, 2)
+        page_number = request.GET.get('page')
+        try:
+            page_obj = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+        context = {'products': products, 'page_obj': page_obj}
+
+        return render(request, 'product/product-list.html', context)
 
 
 def product_details(request, product_id):
@@ -76,3 +98,14 @@ def add_product(request):
     context = {'form': form}
 
     return render(request, 'product/add-product.html', context)
+
+
+class DeleteProductView(View):
+    def get(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        return render(request, 'product/delete_product.html', {'product': product})
+
+    def post(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return redirect('index')
