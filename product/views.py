@@ -1,9 +1,15 @@
+from django.core.mail import BadHeaderError, send_mail
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from product.forms import *  # ProductForm, ProductModelForm
 from product.models import *
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+from django.contrib import messages
+from django import forms
+
+
 
 # Create your views here.
 
@@ -109,3 +115,22 @@ class DeleteProductView(View):
         product = Product.objects.get(id=product_id)
         product.delete()
         return redirect('index')
+
+
+def send_messages(request):
+    m = ''
+    if request.method == 'POST':
+        subject = request.POST['subject']
+        message = request.POST['message']
+        from_email = 'bdiyora008@gmail.com'
+        to = [request.POST['to'], ]
+        if subject and message and from_email:
+            try:
+                send_mail(subject, message, from_email, to)
+                messages.add_message(request, messages.SUCCESS, 'Message is sent.')
+            except BadHeaderError:
+                return HttpResponse("Invalid header found.")
+            return redirect('customers')
+        else:
+            m = 'Unfilled field detected'
+    return render(request, 'message.html', {'m': m})

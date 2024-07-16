@@ -91,7 +91,7 @@
                   </div>
                   <div class="col-auto fs--1 text-600"><span class="mb-0 undefined">or</span> <span><a href="../../../pages/authentication/simple/register.html">Create an account</a></span></div>
                 </div>
-                <form method="post">
+                <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                   <div class="mb-3">
                       <label for=""><input class="form-control" type="text" name="phone_number" placeholder="Phone number (+998.........)" /></label>

@@ -17,3 +17,10 @@ class ProductModelForm(forms.ModelForm):
         fields = ['title', 'description', 'price', 'rating', 'discount', 'quantity']
         # exclude = () or []  will exclude any field
         # empty exclude = () can be used instead of fields
+
+
+class MessageForm(forms.Form):
+    subject = forms.CharField(max_length=300)
+    body = forms.CharField(widget=forms.Textarea(attrs={'size': '30'}))
+    from_email = 'bdiyora008@gmail.com'
+    to = forms.EmailField()

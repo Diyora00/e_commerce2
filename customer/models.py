@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ('-id',)
 
     objects = CustomUserManager()
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
     # this method must return what is assigned to USERNAME_FIELD (in this case 'email')
