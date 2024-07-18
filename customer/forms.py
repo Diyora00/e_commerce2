@@ -48,7 +48,6 @@ class LoginForm(forms.Form):
 #         fields = ('username', 'email', 'password1', 'password2', 'phone_number')
 
 class RegisterForm(forms.ModelForm):
-
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '+998.........'}))
 

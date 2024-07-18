@@ -38,6 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=False,
         null=False,
     )
+    email_is_verified = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('-id',)

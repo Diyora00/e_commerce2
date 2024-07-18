@@ -133,4 +133,4 @@ def send_messages(request):
             return redirect('customers')
         else:
             m = 'Unfilled field detected'
-    return render(request, 'message.html', {'m': m})
+    return render(request, 'email/message.html', {'m': m})
