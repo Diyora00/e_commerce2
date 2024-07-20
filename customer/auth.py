@@ -43,6 +43,7 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             return redirect('verify-email')
     else:
@@ -59,7 +60,7 @@ def verify_email(request):
         if not request.user.email_is_verified:
             current_site = get_current_site(request)
             user = request.user
-            email = request.user.email
+            # email = request.user.email
             subject = "Verify Email"
             message = render_to_string('email/verify_email_message.html', {
                 'request': request,
