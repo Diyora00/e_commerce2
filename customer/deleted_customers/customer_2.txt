@@ -1,0 +1,1 @@
+{'fullname': 'Jack Johnson', 'email': 'jack@gmail.com', 'phone_number': '+998998707070', 'address': 'Tashkent/Olmazor disctrict', 'joined_date': datetime.datetime(2024, 7, 23, 10, 43, 54, 949102, tzinfo=datetime.timezone.utc)}

@@ -15,6 +15,7 @@ class Customer(models.Model):
     is_active = models.BooleanField(default=False)
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False,)
 
+    @property
     def joined_time_format(self):
         return self.joined.strftime('%B %d, %Y at %I:%M %p')
 

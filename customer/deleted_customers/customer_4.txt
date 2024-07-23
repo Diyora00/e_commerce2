@@ -1,0 +1,1 @@
+"  {'fullname': 'sam', 'email': 'sam@gmail.com', 'phone_number': '+998998707171', 'address': 'Tashkent/Olmazor district', 'joined_date': 'July 23, 2024 at 11:19 AM'}"

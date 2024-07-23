@@ -25,8 +25,8 @@ class ProductModelAdmin(SortableAdminMixin, ImportExportModelAdmin, admin.ModelA
     ordering = ('my_order',)
     resource_class = ProductRecourse
 
-    def has_add_permission(self, request):
-        return False
+    # def has_add_permission(self, request):
+    #     return False
 
     def has_delete_permission(self, request, obj=None):
         if request.user.email == 'suzy@gmail.com':

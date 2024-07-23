@@ -1,0 +1,8 @@
+{
+    "id": 6,
+    "name": "product2",
+    "price": 390.0,
+    "description": "good product",
+    "discount": 30,
+    "quantity": 23
+}

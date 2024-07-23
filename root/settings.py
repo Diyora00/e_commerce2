@@ -61,7 +61,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'product.middleware.SteinDebugMiddleware',
+    # Custom middleware
+    # 'django.middleware.common.CommonMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -179,6 +182,8 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -213,3 +218,6 @@ SOCIAL_AUTH_FACEBOOK_REDIRECT_URI = 'https://mysite.com/complete/facebook/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {
     'prompt': 'select_account'
 }
+
+SOCIAL_AUTH_TWITTER_KEY = 'BqPIZ1tQtDBzc9EQ1p8cUrGNp'
+SOCIAL_AUTH_TWITTER_SECRET = 'QJHdxWWFPmdM8hS88hQQkOGnnUjyCm72CJtKFP1pGh1yPDJHeq'
