@@ -1,13 +1,16 @@
 from django.core.mail import BadHeaderError, send_mail
 from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.db.models import Q, Sum, Avg, Max, Min, Count, F
 from product.forms import *  # ProductForm, ProductModelForm
 from product.models import *
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.contrib import messages
+import datetime
 from django import forms
+from django.utils import timezone
+from datetime import timedelta
 
 
 
@@ -134,3 +137,52 @@ def send_messages(request):
         else:
             m = 'Unfilled field detected'
     return render(request, 'email/message.html', {'m': m})
+
+
+def sorting(request):
+    klab = Product.objects.filter(title='Klab').aggregate(quantity_of_ordered_klab=Sum('order__quantity'))
+    products = Product.objects.all()
+    orders = Order.objects.all()
+    total_orders_per_product = Product.objects.annotate(total=Sum('order__quantity'))
+
+    total = Product.objects.aggregate(total_sum_of_orders=Sum(F('price')*F('order__quantity')))
+    total_sum_per_product = Product.objects.annotate(total=Sum(F('price')*F('order__quantity')))
+
+    today = datetime.datetime.today()
+    start_date = datetime.datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0,
+                                   second=0)  # represents 00:00:00
+    end_date = datetime.datetime(year=today.year, month=today.month, day=today.day, hour=23, minute=59,
+                                 second=59)  # represents 23:59:59
+    ordered_today = Order.objects.filter(date_of_order__range=(start_date, end_date))
+
+    ten_days_ago = timezone.now() - timedelta(days=10)
+    orders_last_10_days = Order.objects.filter(date_of_order__gte=ten_days_ago)
+
+    order_per_customer = Customer.objects.annotate(total=Sum('order__quantity'))
+
+    bills = Customer.objects.annotate(total=Sum(F('order__quantity')*F('order__product__price')))
+    min_bill = order_per_customer.aggregate(minmumm_bill=Min('total'))
+    max_bill = order_per_customer.aggregate(maximum_bill=Max('total'))
+    average_bill = order_per_customer.aggregate(average_bill=Avg('total'))
+    average_bill = round(average_bill['average_bill'], 2)
+
+    context = {
+        'klab': klab,
+        'products': products,
+        'orders': orders,
+        'total': total,
+
+        'today': ordered_today,
+        'ten': orders_last_10_days,
+
+        'order_per_customer': order_per_customer,
+
+        'bills': bills,
+        'min_bill': min_bill,
+        'max_bill': max_bill,
+        'average_bill': average_bill,
+
+        'total_orders_per_product': total_orders_per_product,
+        'total_sum_per_product': total_sum_per_product,
+    }
+    return render(request, 'aggregate_annotate.html', context)

@@ -11,5 +11,6 @@ urlpatterns = [
 
     path('message/', send_messages, name='message'),
     path('test/', middleware_view, name='test'),
+    path('list/', sorting, name='list'),
 
 ]

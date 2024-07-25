@@ -1,5 +1,7 @@
 from django.db import models
 
+from customer.models import Customer
+
 
 # title, description, price, rating, discount, discounted_price, quantity
 class Product(models.Model):
@@ -36,6 +38,22 @@ class Product(models.Model):
         if self.discount > 0:
             return self.price*(1 - self.discount/100)
         return self.price
+
+
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    quantity = models.PositiveIntegerField(default=0)
+    date_of_order = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.product.title
+
+    @property
+    def total_price(self):
+        if self.quantity > 0:
+            return self.quantity * self.product.price
+        return 0
 
 
 class Image(models.Model):

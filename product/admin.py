@@ -10,6 +10,7 @@ admin.site.register(Image)
 admin.site.register(Attribute)
 admin.site.register(AttributeValue)
 admin.site.register(ProductAttributeValue)
+admin.site.register(Order)
 
 
 class ProductRecourse(resources.ModelResource):

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'adminsortable2',
     'sslserver',
     'social_django',
+    # 'mathfilters',
 
 
 ]
@@ -61,10 +62,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'product.middleware.SteinDebugMiddleware',
     # Custom middleware
-    # 'django.middleware.common.CommonMiddleware',
+    'product.middleware.SteinDebugMiddleware',
 
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -221,3 +222,4 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {
 
 SOCIAL_AUTH_TWITTER_KEY = 'BqPIZ1tQtDBzc9EQ1p8cUrGNp'
 SOCIAL_AUTH_TWITTER_SECRET = 'QJHdxWWFPmdM8hS88hQQkOGnnUjyCm72CJtKFP1pGh1yPDJHeq'
+APPEND_SLASH = True

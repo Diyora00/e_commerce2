@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aggregation and annotation</title>
+</head>
+<body>
+    <h3>{{ klab }}</h3>
+    <hr>
+    
+    <h2>Total quantity of orders per product</h2>
+    {% for order in total_orders_per_product %}
+        <h3>{{ order.title }} --> Quantity: {{ order.total }}</h3>
+    {% endfor  %}
+    
+    <h2>Total sum per product</h2>
+    {% for p in total_sum_per_product %}
+        <h3>{{ p.title }} --> {{ p.total }} $</h3>
+    {% endfor %}
+    
+    <div style="background-color: #1da1f2;">
+        <h3>{{ total }}$</h3>
+    </div>
+
+    <hr>
+    <h2>Product ordered today</h2>
+    {% for product in today %}
+        <h3>{{ product }}</h3>
+    {% endfor %}
+
+    <hr>
+    <h2>Products ordered in last 10 days</h2>
+    {% for product in ten %}
+        <h3>{{ product }}</h3>
+    {% endfor %}
+    
+    <hr>
+    <h2>Total quantity of orders per customer</h2>
+    {% for order in order_per_customer%}
+        <h3>{{ order.fullname }}: {{ order.total}}</h3>
+    {% endfor %}
+    
+    <hr>
+    <h2>Order per customer</h2>
+    {% for order in orders %}
+        <h3>{{ order.customer.fullname }} ::{{ order.product.title }} -->  {{ order.quantity }}  --> {{ order.total_price }} $</h3>
+    {% endfor %}
+
+    <hr>
+    <h2>Total bill per customer</h2>
+    {% for bill in bills %}
+        <h3>{{ bill.fullname }} :{{ bill.total }} $</h3>
+    {% endfor %}
+
+    <hr>
+    <h3>{{ max_bill }}</h3>
+    <h3>{{ min_bill }}</h3>
+    <h3>average_bill: {{ average_bill }}</h3>
+</body>
+</html>
