@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
 ALLOWED_HOSTS = ['mysite.com', '127.0.0.1', 'localhost',]
 
@@ -104,13 +104,14 @@ WSGI_APPLICATION = 'root.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'NAME': env('NAME'),
-        # 'USER': env('USER'),
-        # 'PASSWORD': env('PASSWORD'),
-        # 'HOST': env('HOST'),
-        # 'PORT': env('PORT'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
@@ -206,9 +207,9 @@ SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
-SOCIAL_AUTH_FACEBOOK_KEY = env('SOCIAL_AUTH_FACEBOOK_KEY')
-SOCIAL_AUTH_FACEBOOK_SECRET = env('SOCIAL_AUTH_FACEBOOK_SECRET')
-SOCIAL_AUTH_FACEBOOK_REDIRECT_URI = 'https://mysite.com/complete/facebook/'
+# SOCIAL_AUTH_FACEBOOK_KEY = env('SOCIAL_AUTH_FACEBOOK_KEY')
+# SOCIAL_AUTH_FACEBOOK_SECRET = env('SOCIAL_AUTH_FACEBOOK_SECRET')
+# SOCIAL_AUTH_FACEBOOK_REDIRECT_URI = 'https://mysite.com/complete/facebook/'
 
 #
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
@@ -220,6 +221,5 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {
     'prompt': 'select_account'
 }
 
-SOCIAL_AUTH_TWITTER_KEY = 'BqPIZ1tQtDBzc9EQ1p8cUrGNp'
-SOCIAL_AUTH_TWITTER_SECRET = 'QJHdxWWFPmdM8hS88hQQkOGnnUjyCm72CJtKFP1pGh1yPDJHeq'
-APPEND_SLASH = True
+SOCIAL_AUTH_TWITTER_KEY = env('SOCIAL_AUTH_TWITTER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET = env('SOCIAL_AUTH_TWITTER_SECRET')
