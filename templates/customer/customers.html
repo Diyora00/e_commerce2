@@ -250,7 +250,7 @@
                   </div>
                 </a>
                  <div>
-                        {% if user.is_authenticated %}
+                        {% if user.is_authenticated and user.email%}
                             <h5><strong>{{ user.split_email }}</strong></h5>
                         {% endif %}
                  </div>
